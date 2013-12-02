@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
 static QString defaultStyleName()
 {
     //Only enable QStyle support when we are using QApplication
-#if !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined (Q_OS_BLACKBERRY)
+#if !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined (Q_OS_BLACKBERRY) && !defined(Q_OS_LINUX_TIZEN)
     if (QCoreApplication::instance()->inherits("QApplication"))
         return QLatin1String("Desktop");
 #endif
@@ -76,7 +76,7 @@ static bool fromResource(const QString &path)
 bool QQuickControlSettings::hasTouchScreen() const
 {
 // QTBUG-36007
-#if defined(Q_OS_ANDROID)
+#if defined(Q_OS_ANDROID) || defined(Q_OS_LINUX_TIZEN)
     return true;
 #else
     foreach (const QTouchDevice *dev, QTouchDevice::devices())
