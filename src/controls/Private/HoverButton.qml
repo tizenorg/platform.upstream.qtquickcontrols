@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the Qt Quick Controls module of the Qt Toolkit.
@@ -38,56 +38,42 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.1
+import QtQuick 2.2
 
-/*!
-    \qmltype Label
-    \inqmlmodule QtQuick.Controls
-    \since 5.1
-    \ingroup controls
-    \brief A text label.
+Item {
+    id: button
+    property alias source: image.source
+    signal clicked
 
-    In addition to the normal \l Text element, Label follows the font and
-    color scheme of the system.
-    Use the \c text property to assign a text to the label. For other properties
-    check \l Text.
-
-    A simple label looks like this:
-    \qml
-    Label {
-        text: "Hello world"
+    Rectangle {
+        id: fillRect
+        anchors.fill: parent
+        color: "black"
+        opacity: mouse.pressed ? 0.07 : mouse.containsMouse ? 0.02 : 0.0
     }
-    \endqml
 
-    You can use the properties of \l Text to change the appearance
-    of the text as desired:
-    \qml
-    Label {
-        text: "Hello world"
-        font.pixelSize: 22
-        font.italic: true
-        color: "steelblue"
+    Rectangle {
+        border.color: gridColor
+        anchors.fill: parent
+        anchors.margins: -1
+        color: "transparent"
+        opacity: fillRect.opacity * 10
     }
-    \endqml
 
-    \sa Text, TextField, TextEdit
-*/
-
-Text {
-    /*!
-        \qmlproperty string Label::text
-
-        The text to display. Use this property to get and set it.
-    */
-
-    id: label
-    color: pal.windowText
-    activeFocusOnTab: false
-    renderType: Text.NativeRendering
-    SystemPalette {
-        id: pal
-        colorGroup: enabled ? SystemPalette.Active : SystemPalette.Disabled
+    Image {
+        id: image
+        width: implicitWidth/2
+        height: implicitHeight/2
+        anchors.centerIn: parent
+        anchors.alignWhenCentered: true
+        source: "images/leftanglearrow.png"
+        opacity: 0.6
     }
-    Accessible.name: text
-    Accessible.role: Accessible.StaticText
+
+    MouseArea {
+        id: mouse
+        anchors.fill: parent
+        onClicked: button.clicked()
+        hoverEnabled: true
+    }
 }
