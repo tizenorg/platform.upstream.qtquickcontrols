@@ -38,8 +38,8 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.1
-import QtQuick.Controls 1.1
+import QtQuick 2.2
+import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Window 2.1
@@ -160,7 +160,15 @@ ScrollView {
             text: styleData.value
         }
     }
-    \endcode */
+    \endcode
+
+    \note For performance reasons, created delegates can be recycled
+    across multiple table rows. This implies that when you make use of implicit
+    properties such as \c styledata.row or \c model, these values can change also
+    after the delegate has been constructed. In practice this means you should not assume
+    that content is fixed when \c Component.onCompleted happens, but instead rely on
+    bindings to such properties.
+    */
     property Component itemDelegate: __style ? __style.itemDelegate : null
 
     /*! This property defines a delegate to draw a row.
@@ -171,6 +179,13 @@ ScrollView {
     \li  styleData.selected - true when the row is currently selected
     \li  styleData.row - the index of the row
     \endlist
+
+    \note For performance reasons, created delegates can be recycled
+    across multiple table rows. This implies that when you make use of implicit
+    properties such as \c styledata.row or \c model, these values can change also
+    after the delegate has been constructed. In practice this means you should not assume
+    that content is fixed when \c Component.onCompleted happens, but instead rely on
+    bindings to such properties.
     */
     property Component rowDelegate: __style ? __style.rowDelegate : null
 
@@ -255,6 +270,8 @@ ScrollView {
         \a row int provides access to the activated row index.
 
         \note This signal is only emitted for mouse interaction that is not blocked in the row or item delegate.
+
+        The corresponding handler is \c onActivated.
     */
     signal activated(int row)
 
@@ -265,6 +282,8 @@ ScrollView {
         \a row int provides access to the clicked row index.
 
         \note This signal is only emitted if the row or item delegate does not accept mouse events.
+
+        The corresponding handler is \c onClicked.
     */
     signal clicked(int row)
 
@@ -275,6 +294,8 @@ ScrollView {
         \a row int provides access to the clicked row index.
 
         \note This signal is only emitted if the row or item delegate does not accept mouse events.
+
+        The corresponding handler is \c onDoubleClicked.
     */
     signal doubleClicked(int row)
 
@@ -840,7 +861,7 @@ ScrollView {
                 Loader {
                     id: rowstyle
                     // row delegate
-                    sourceComponent: root.rowDelegate
+                    sourceComponent: rowitem.itemModel !== undefined ? root.rowDelegate : null
                     // Row fills the view width regardless of item size
                     // But scrollbar should not adjust to it
                     height: item ? item.height : 16
@@ -870,7 +891,8 @@ ScrollView {
                             width:  columnItem.width
                             height: parent ? parent.height : 0
                             visible: columnItem.visible
-                            sourceComponent: columnItem.delegate ? columnItem.delegate : itemDelegate
+                            sourceComponent: rowitem.itemModel !== undefined ? // delays construction until model is initialized
+                                                 (columnItem.delegate ? columnItem.delegate : itemDelegate) : null
 
                             // these properties are exposed to the item delegate
                             readonly property var model: itemModel
@@ -1026,6 +1048,7 @@ ScrollView {
                             id: headerResizeHandle
                             property int offset: 0
                             property int minimumSize: 20
+                            preventStealing: true
                             anchors.rightMargin: -width/2
                             width: Settings.hasTouchScreen ? Screen.pixelDensity * 3.5 : 16
                             height: parent.height

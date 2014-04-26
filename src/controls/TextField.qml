@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import QtQuick 2.2
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 
 /*!
@@ -381,8 +381,8 @@ Control {
         integers between 11 and 31 into the text input:
 
         \code
-        import QtQuick 2.1
-        import QtQuick.Controls 1.1
+        import QtQuick 2.2
+        import QtQuick.Controls 1.2
 
         TextField {
             validator: IntValidator {bottom: 11; top: 31;}
@@ -401,18 +401,22 @@ Control {
         Note that if there is a \l validator or \l inputMask set on the text
         field, the signal will only be emitted if the input is in an acceptable
         state.
+
+        The corresponding handler is \c onAccepted.
     */
     signal accepted()
 
     /*!
         \qmlsignal TextField::editingFinished()
-        \since 5.2
+        \since QtQuick.Controls 1.1
 
         This signal is emitted when the Return or Enter key is pressed or
         the text field loses focus. Note that if there is a validator or
         inputMask set on the text field and enter/return is pressed, this
         signal will only be emitted if the input follows
         the inputMask and the validator returns an acceptable state.
+
+        The corresponding handler is \c onEditingFinished.
     */
     signal editingFinished()
 

@@ -104,6 +104,8 @@ public:
     {
         m_geometry.setDrawingMode(GL_TRIANGLE_STRIP);
         setGeometry(&m_geometry);
+        // The texture material has mipmap filtering set to Nearest by default. This is not ideal.
+        m_material.setMipmapFiltering(QSGTexture::None);
         setMaterial(&m_material);
     }
 
@@ -264,6 +266,8 @@ void QQuickStyleItem::initStyleOption()
                                         (sizeHint == "small") ? QPlatformTheme::SmallFont :
                                         QPlatformTheme::SystemFont;
 
+    bool needsResolvePalette = true;
+
     switch (m_itemType) {
     case Button: {
         if (!m_styleoption)
@@ -330,6 +334,8 @@ void QQuickStyleItem::initStyleOption()
         opt->features = QStyleOptionViewItem::HasDisplay;
         opt->text = text();
         opt->textElideMode = Qt::ElideRight;
+        resolvePalette();
+        needsResolvePalette = false;
         QPalette pal = m_styleoption->palette;
         pal.setBrush(QPalette::Base, Qt::NoBrush);
         m_styleoption->palette = pal;
@@ -715,6 +721,9 @@ void QQuickStyleItem::initStyleOption()
     if (!m_styleoption)
         m_styleoption = new QStyleOption();
 
+    if (needsResolvePalette)
+        resolvePalette();
+
     m_styleoption->styleObject = this;
     m_styleoption->direction = qApp->layoutDirection();
 
@@ -754,6 +763,62 @@ void QQuickStyleItem::initStyleOption()
         m_styleoption->state |= QStyle::State_Small;
     }
 
+}
+
+void QQuickStyleItem::resolvePalette()
+{
+    QPlatformTheme::Palette paletteType = QPlatformTheme::SystemPalette;
+    switch (m_itemType) {
+    case Button:
+        paletteType = QPlatformTheme::ButtonPalette;
+        break;
+    case RadioButton:
+        paletteType = QPlatformTheme::RadioButtonPalette;
+        break;
+    case CheckBox:
+        paletteType = QPlatformTheme::CheckBoxPalette;
+        break;
+    case ComboBox:
+    case ComboBoxItem:
+        paletteType = QPlatformTheme::ComboBoxPalette;
+        break;
+    case ToolBar:
+    case ToolButton:
+        paletteType = QPlatformTheme::ToolButtonPalette;
+        break;
+    case Tab:
+    case TabFrame:
+        paletteType = QPlatformTheme::TabBarPalette;
+        break;
+    case Edit:
+        paletteType = QPlatformTheme::TextEditPalette;
+        break;
+    case GroupBox:
+        paletteType = QPlatformTheme::GroupBoxPalette;
+        break;
+    case Header:
+        paletteType = QPlatformTheme::HeaderPalette;
+        break;
+    case Item:
+    case ItemRow:
+        paletteType = QPlatformTheme::ItemViewPalette;
+        break;
+    case Menu:
+    case MenuItem:
+        paletteType = QPlatformTheme::MenuPalette;
+        break;
+    case MenuBar:
+    case MenuBarItem:
+        paletteType = QPlatformTheme::MenuBarPalette;
+        break;
+    default:
+        break;
+    }
+
+    const QPalette *platformPalette = QGuiApplicationPrivate::platformTheme()->palette(paletteType);
+    if (platformPalette)
+        m_styleoption->palette = *platformPalette;
+    // Defaults to SystemPalette otherwise
 }
 
 /*
@@ -871,8 +936,16 @@ QSize QQuickStyleItem::sizeFromContents(int width, int height)
         break;
     case Button: {
         QStyleOptionButton *btn = qstyleoption_cast<QStyleOptionButton*>(m_styleoption);
-        int newWidth = qMax(width, btn->fontMetrics.width(btn->text));
-        int newHeight = qMax(height, btn->fontMetrics.height());
+
+        int contentWidth = btn->fontMetrics.width(btn->text);
+        int contentHeight = btn->fontMetrics.height();
+        if (!btn->icon.isNull()) {
+            //+4 matches a hardcoded value in QStyle and acts as a margin between the icon and the text.
+            contentWidth += btn->iconSize.width() + 4;
+            contentHeight = qMax(btn->fontMetrics.height(), btn->iconSize.height());
+        }
+        int newWidth = qMax(width, contentWidth);
+        int newHeight = qMax(height, contentHeight);
         size = qApp->style()->sizeFromContents(QStyle::CT_PushButton, m_styleoption, QSize(newWidth, newHeight)); }
 #ifdef Q_OS_OSX
         if (style() == "mac") {
@@ -1125,11 +1198,9 @@ QVariant QQuickStyleItem::styleHint(const QString &metric)
     if (metric == "comboboxpopup") {
         return qApp->style()->styleHint(QStyle::SH_ComboBox_Popup, m_styleoption);
     } else if (metric == "highlightedTextColor") {
-        QPalette pal = QApplication::palette("QAbstractItemView");
-        pal.setCurrentColorGroup(m_styleoption->palette.currentColorGroup());
-        return pal.highlightedText().color().name();
+        return m_styleoption->palette.highlightedText().color().name();
     } else if (metric == "textColor") {
-        QPalette pal = qApp->palette();
+        QPalette pal = m_styleoption->palette;
         pal.setCurrentColorGroup(active()? QPalette::Active : QPalette::Inactive);
         return pal.text().color().name();
     } else if (metric == "focuswidget") {
@@ -1608,6 +1679,7 @@ void QQuickStyleItem::paint(QPainter *painter)
             frame.midLineWidth = 0;
             frame.rect = m_styleoption->rect;
             frame.styleObject = this;
+            frame.palette = m_styleoption->palette;
             qApp->style()->drawPrimitive(QStyle::PE_FrameMenu, &frame, painter);
         }
     }

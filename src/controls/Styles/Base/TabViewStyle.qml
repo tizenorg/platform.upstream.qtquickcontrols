@@ -37,8 +37,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-import QtQuick 2.1
-import QtQuick.Controls 1.1
+import QtQuick 2.2
+import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 
 /*!
@@ -139,7 +139,7 @@ Style {
         scale: control.tabPosition === Qt.TopEdge ? 1 : -1
 
         property int totalOverlap: tabOverlap * (control.count - 1)
-        property real maxTabWidth: (styleData.availableWidth + totalOverlap) / control.count
+        property real maxTabWidth: control.count > 0 ? (styleData.availableWidth + totalOverlap) / control.count : 0
 
         implicitWidth: Math.round(Math.min(maxTabWidth, textitem.implicitWidth + 20))
         implicitHeight: Math.round(textitem.implicitHeight + 10)

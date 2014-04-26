@@ -342,6 +342,8 @@ void QQuickMenuText::updateIcon()
     Emitted when either the menu item or its bound action have been activated.
 
     \sa trigger(), Action::triggered, Action::toggled
+
+    The corresponding handler is \c onTriggered.
 */
 
 /*! \qmlmethod MenuItem::trigger()
@@ -404,6 +406,8 @@ void QQuickMenuText::updateIcon()
     This usually happens at the same time as \l triggered.
 
     \sa checked, triggered, Action::triggered, Action::toggled
+
+    The corresponding handler is \c onToggled.
 */
 
 /*!
@@ -513,12 +517,7 @@ void QQuickMenuItem::setBoundAction(QQuickAction *a)
     if (a == m_boundAction)
         return;
 
-    if (m_boundAction) {
-        if (m_boundAction->parent() == this)
-            delete m_boundAction;
-        else
-            unbindFromAction(m_boundAction);
-    }
+    unbindFromAction(m_boundAction);
 
     bindToAction(a);
     emit actionChanged();

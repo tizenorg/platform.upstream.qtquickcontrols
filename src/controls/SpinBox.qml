@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import QtQuick 2.2
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 
 /*!
@@ -141,7 +141,7 @@ Control {
     property bool activeFocusOnPress: true
 
     /*! \qmlproperty enumeration horizontalAlignment
-        \since 5.2
+        \since QtQuick.Controls 1.1
 
         This property indicates how the content is horizontally aligned
         within the text field.
@@ -166,12 +166,14 @@ Control {
 
     /*!
         \qmlsignal SpinBox::editingFinished()
-        \since 5.2
+        \since QtQuick.Controls 1.1
 
         This signal is emitted when the Return or Enter key is pressed or
         the control loses focus. Note that if there is a validator
         set on the control and enter/return is pressed, this signal will
         only be emitted if the validator returns an acceptable state.
+
+        The corresponding handler is \c onEditingFinished.
     */
     signal editingFinished()
 
@@ -259,6 +261,7 @@ Control {
         horizontalAlignment: spinbox.horizontalAlignment
         verticalAlignment: __panel ? __panel.verticalAlignment : Qt.AlignVCenter
         selectByMouse: activeFocus || activeFocusOnPress
+        inputMethodHints: Qt.ImhFormattedNumbersOnly
 
         validator: SpinBoxValidator {
             id: validator

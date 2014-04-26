@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 import QtQuick 2.2
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 
 /*!
@@ -54,7 +54,7 @@ import QtQuick.Controls.Private 1.0
     Example:
     \qml
     BusyIndicator {
-        style: BusyIndicatorStyle
+        style: BusyIndicatorStyle {
             indicator: Image {
                 visible: control.running
                 source: "spinner.png"

@@ -53,7 +53,14 @@ QQuickPopupWindow::QQuickPopupWindow() :
     m_dismissed(false)
 {
     setFlags(Qt::Popup);
-    setModality(Qt::ApplicationModal);
+    connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)),
+            this, SLOT(applicationStateChanged(Qt::ApplicationState)));
+}
+
+void QQuickPopupWindow::applicationStateChanged(Qt::ApplicationState state)
+{
+    if (state != Qt::ApplicationActive)
+        dismissPopup();
 }
 
 void QQuickPopupWindow::show()

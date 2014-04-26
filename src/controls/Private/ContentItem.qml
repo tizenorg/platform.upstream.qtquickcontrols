@@ -38,15 +38,15 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.1
+import QtQuick 2.2
 import QtQuick.Layouts 1.1
 
 Item {
     id: contentItem
     property real minimumWidth: __calcMinimum('Width')
     property real minimumHeight: __calcMinimum('Height')
-    property real maximumWidth: __calcMaximum('Width')
-    property real maximumHeight: __calcMaximum('Height')
+    property real maximumWidth: Number.POSITIVE_INFINITY
+    property real maximumHeight: Number.POSITIVE_INFINITY
     implicitWidth: __calcImplicitWidth()
     implicitHeight: __calcImplicitHeight()
 

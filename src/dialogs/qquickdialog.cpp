@@ -64,12 +64,16 @@ QT_BEGIN_NAMESPACE
     \qmlsignal QtQuick::Dialogs::Dialog::accepted
 
     This signal is emitted by \l accept().
+
+    The corresponding handler is \c onAccepted.
 */
 
 /*!
     \qmlsignal QtQuick::Dialogs::Dialog::rejected
 
     This signal is emitted by \l reject().
+
+    The corresponding handler is \c onRejected.
 */
 
 /*!
@@ -100,13 +104,13 @@ QQuickDialog::~QQuickDialog()
 {
 }
 
-QJSValue QQuickDialog::standardButtonsLeftModel()
+QJSValue QQuickDialog::__standardButtonsLeftModel()
 {
     updateStandardButtons();
     return m_standardButtonsLeftModel;
 }
 
-QJSValue QQuickDialog::standardButtonsRightModel()
+QJSValue QQuickDialog::__standardButtonsRightModel()
 {
     updateStandardButtons();
     return m_standardButtonsRightModel;

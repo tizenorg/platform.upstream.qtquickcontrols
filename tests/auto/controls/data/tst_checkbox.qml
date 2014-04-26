@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.1
+import QtQuick 2.2
 import QtTest 1.0
 import QtQuickControlsTests 1.0
 
@@ -61,7 +61,7 @@ Item {
         }
 
         function init() {
-            checkBox = Qt.createQmlObject("import QtQuick.Controls 1.1; CheckBox { }", container, "");
+            checkBox = Qt.createQmlObject("import QtQuick.Controls 1.2; CheckBox { }", container, "");
         }
 
         function cleanup() {
@@ -168,8 +168,47 @@ Item {
             }
         }
 
+        function test_check_keep_binding() {
+            var root = Qt.createQmlObject("import QtQuick 2.2; import QtQuick.Controls 1.2; \n"
+                + "Row { \n"
+                + "    property alias checkBox1: checkBox1 \n"
+                + "    property alias checkBox2: checkBox2 \n"
+                + "    CheckBox { id: checkBox1 } \n"
+                + "    CheckBox { id: checkBox2; checked: checkBox1.checked; enabled: false } \n"
+                + "}", container, "");
+
+            compare(root.checkBox1.checked, false);
+            compare(root.checkBox2.checked, false);
+            root.checkBox1.checked = true;
+            compare(root.checkBox1.checked, true);
+            compare(root.checkBox2.checked, true);
+            root.checkBox1.checked = false;
+            compare(root.checkBox1.checked, false);
+            compare(root.checkBox2.checked, false);
+        }
+
+        function test_checkState_keep_binding() {
+            var root = Qt.createQmlObject("import QtQuick 2.2; import QtQuick.Controls 1.2; \n"
+                + "Row { \n"
+                + "    property alias checkBox1: checkBox1 \n"
+                + "    property alias checkBox2: checkBox2 \n"
+                + "    CheckBox { id: checkBox1 } \n"
+                + "    CheckBox { id: checkBox2; checkedState: checkBox1.checkedState; enabled: false } \n"
+                + "}", container, "");
+
+            compare(root.checkBox1.checkedState, Qt.Unchecked);
+            compare(root.checkBox2.checkedState, Qt.Unchecked);
+            root.checkBox1.checkedState = Qt.Checked;
+            compare(root.checkBox1.checkedState, Qt.Checked);
+            compare(root.checkBox2.checkedState, Qt.Checked);
+            root.checkBox1.checkedState = Qt.Unchecked;
+            compare(root.checkBox1.checkedState, Qt.Unchecked);
+            compare(root.checkBox2.checkedState, Qt.Unchecked);
+        }
+
+
         function test_exclusiveGroup() {
-            var root = Qt.createQmlObject("import QtQuick 2.1; import QtQuick.Controls 1.1; \n"
+            var root = Qt.createQmlObject("import QtQuick 2.2; import QtQuick.Controls 1.2; \n"
                 + "Row { \n"
                 + "    property alias checkBox1: checkBox1 \n"
                 + "    property alias checkBox2: checkBox2 \n"
@@ -242,8 +281,8 @@ Item {
             if (!SystemInfo.tabAllWidgets)
                 skip("This function doesn't support NOT iterating all.")
 
-            var test_control = 'import QtQuick 2.1; \
-            import QtQuick.Controls 1.1;            \
+            var test_control = 'import QtQuick 2.2; \
+            import QtQuick.Controls 1.2;            \
             Item {                                  \
                 width: 200;                         \
                 height: 200;                        \

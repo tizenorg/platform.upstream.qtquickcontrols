@@ -37,9 +37,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-import QtQuick 2.1
+import QtQuick 2.2
 import QtQuick.Window 2.1
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import "." as Desktop
 
@@ -87,6 +87,7 @@ Style {
     property Component __dropDownStyle: Style {
         property int __maxPopupHeight: 600
         property int submenuOverlap: 0
+        property int submenuPopupDelay: 0
 
         property Component frame: StyleItem {
             elementType: "frame"

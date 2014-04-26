@@ -38,9 +38,9 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.1
+import QtQuick 2.2
 import QtTest 1.0
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.2
 import QtQuickControlsTests 1.0
 
 Rectangle {
@@ -71,8 +71,8 @@ TestCase {
 
     function test_basic_setup() {
         var test_instanceStr =
-           'import QtQuick 2.1;             \
-            import QtQuick.Controls 1.1;    \
+           'import QtQuick 2.2;             \
+            import QtQuick.Controls 1.2;    \
             TableView {                     \
                 TableViewColumn {           \
                 }                           \
@@ -385,6 +385,24 @@ TestCase {
         verify(table.selection.contains(8))
     }
 
+    function test_initializedStyleData() {
+        var table = Qt.createQmlObject('import QtQuick.Controls 1.2; \
+                                        import QtQuick 2.2; \
+                                            TableView { \
+                                                model: 3; \
+                                                TableViewColumn{} \
+                                                property var items: []; \
+                                                property var rows: []; \
+                                                itemDelegate: Item{ Component.onCompleted: { items.push(styleData.row) } } \
+                                                rowDelegate: Item{ Component.onCompleted: { if (styleData.row !== undefined) rows.push(styleData.row) } } \
+                                         }'
+                                       , testCase, '')
+        waitForRendering(table)
+        compare(table.items, [0, 1, 2]);
+        compare(table.rows, [0, 1, 2]);
+    }
+
+
     function test_usingcppqobjectmodel() {
 
         var component = Qt.createComponent("tableview/table1_qobjectmodel.qml")
@@ -631,7 +649,7 @@ TestCase {
     }
 
     function test_columnWidth() {
-        var tableView = Qt.createQmlObject('import QtQuick 2.1; import QtQuick.Controls 1.1; TableView { }', testCase, '');
+        var tableView = Qt.createQmlObject('import QtQuick 2.2; import QtQuick.Controls 1.2; TableView { }', testCase, '');
         compare(tableView.columnCount, 0)
         var column = newColumn.createObject(testCase, {title: "title 1"});
         verify(column.__view === null)
@@ -640,7 +658,7 @@ TestCase {
         tableView.addColumn(column)
         compare(column.__view, tableView)
         compare(column.width, tableView.viewport.width)
-        var tableView2 = Qt.createQmlObject('import QtQuick 2.1; import QtQuick.Controls 1.1; TableView { }', testCase, '');
+        var tableView2 = Qt.createQmlObject('import QtQuick 2.2; import QtQuick.Controls 1.2; TableView { }', testCase, '');
         ignoreWarning("TableView::insertColumn(): you cannot add a column to multiple views")
         tableView2.addColumn(column) // should not work
         compare(column.__view, tableView) //same as before
@@ -662,7 +680,7 @@ TestCase {
     }
 
     function test_addRemoveColumn() {
-        var tableView = Qt.createQmlObject('import QtQuick 2.1; import QtQuick.Controls 1.1; TableView { }', testCase, '');
+        var tableView = Qt.createQmlObject('import QtQuick 2.2; import QtQuick.Controls 1.2; TableView { }', testCase, '');
         compare(tableView.columnCount, 0)
         tableView.addColumn(newColumn.createObject(testCase, {title: "title 1"}))
         compare(tableView.columnCount, 1)
@@ -740,7 +758,7 @@ TestCase {
     }
 
     function test_moveColumn(data) {
-        var tableView = Qt.createQmlObject('import QtQuick 2.1; import QtQuick.Controls 1.1; TableView { }', testCase, '');
+        var tableView = Qt.createQmlObject('import QtQuick 2.2; import QtQuick.Controls 1.2; TableView { }', testCase, '');
         compare(tableView.columnCount, 0)
 
         var titles = ["title 1", "title 2", "title 3"]
@@ -774,8 +792,8 @@ TestCase {
 
     function test_positionViewAtRow() {
         var test_instanceStr =
-           'import QtQuick 2.1;             \
-            import QtQuick.Controls 1.1;    \
+           'import QtQuick 2.2;             \
+            import QtQuick.Controls 1.2;    \
             TableView {                     \
                 TableViewColumn {           \
                 }                           \
