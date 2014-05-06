@@ -202,7 +202,7 @@ Window {
 
     Item {
         id: backgroundItem
-        anchors.centerIn: root.contentItem
+        anchors.centerIn: parent
         property bool isPortrait: contentOrientation === Qt.PortraitOrientation || contentOrientation === Qt.InvertedPortraitOrientation
         objectName: "backgroundItem"
 
