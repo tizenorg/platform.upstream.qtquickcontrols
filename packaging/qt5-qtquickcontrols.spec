@@ -47,9 +47,9 @@ This package contains the Qt Quick Controls library
 
 %prep
 %setup -q -n %{name}-%{version}
-cp %{SOURCE1001} .
 
 %build
+cp %{SOURCE1001} .
 export QTDIR=/usr/share/qt5
 touch .git # To make sure syncqt is used
 
