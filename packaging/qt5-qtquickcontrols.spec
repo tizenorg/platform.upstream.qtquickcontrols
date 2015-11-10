@@ -22,7 +22,7 @@
 
 Name:       qt5-qtquickcontrols
 Summary:    Qt Quick Controls
-Version:    5.4.1
+Version:    5.5.90+alpha1
 Release:    0
 Group:      Base/Libraries
 License:    LGPL-2.1+ or GPL-3.0
@@ -76,3 +76,4 @@ rm -rf %{buildroot}
 %{_libdir}/qt5/qml/QtQuick/Layouts
 %{_libdir}/qt5/qml/QtQuick/Dialogs
 %{_libdir}/qt5/qml/QtQuick/PrivateWidgets
+%{_libdir}/qt5/qml/QtQuick/Extras
